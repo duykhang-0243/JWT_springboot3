@@ -8,7 +8,10 @@ import vn.iotstar.dto.CheckoutRequest;
 import vn.iotstar.entity.Order;
 import vn.iotstar.entity.User;
 import vn.iotstar.services.OrderService;
+import java.util.List;
 
+import vn.iotstar.dto.OrderResponse;
+import vn.iotstar.entity.OrderStatus;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -59,4 +62,33 @@ public class OrderController {
                     .body(e.getMessage());
         }
     }
+ // =====================================================
+ // LỊCH SỬ ĐƠN HÀNG
+ // =====================================================
+
+	 @GetMapping("/history")
+	 public ResponseEntity<List<OrderResponse>> getOrderHistory(
+	         @RequestParam(
+	             required = false
+	         ) OrderStatus status,
+	
+	         Authentication authentication) {
+	
+	
+	     User user =
+	             (User) authentication
+	                     .getPrincipal();
+	
+	
+	     List<OrderResponse> orders =
+	             orderService.getOrderHistory(
+	                     user,
+	                     status
+	             );
+	
+	
+	     return ResponseEntity.ok(
+	             orders
+	     );
+	 }
 }

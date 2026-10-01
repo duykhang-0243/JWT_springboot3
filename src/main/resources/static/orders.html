@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Lịch sử đơn hàng</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        header {
+            background: white;
+            border-bottom: 1px solid #ddd;
+
+            padding: 14px 32px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand h2 {
+            margin: 0;
+        }
+
+        .brand small {
+            color: #666;
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #222;
+
+            padding: 10px 14px;
+
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            background: #eee;
+        }
+
+        nav a.active {
+            background: #222;
+            color: white;
+        }
+
+        button {
+            border: none;
+            border-radius: 6px;
+
+            padding: 10px 16px;
+
+            cursor: pointer;
+        }
+
+        .logout-button {
+            background: #b3261e;
+            color: white;
+        }
+
+        .logout-button:hover {
+            background: #8f1d18;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        main {
+            max-width: 1100px;
+
+            margin: 35px auto;
+
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #666;
+        }
+
+
+        /* =====================================================
+           FILTER
+        ===================================================== */
+
+        .filter-container {
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            padding: 18px;
+
+            margin-bottom: 25px;
+
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 10px;
+        }
+
+        .filter-button {
+            background: #eee;
+            color: #222;
+
+            border: 1px solid #ddd;
+        }
+
+        .filter-button:hover {
+            background: #ddd;
+        }
+
+        .filter-button.active {
+            background: #222;
+            color: white;
+            border-color: #222;
+        }
+
+
+        /* =====================================================
+           ORDER
+        ===================================================== */
+
+        .order-card {
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            overflow: hidden;
+        }
+
+        .order-header {
+            padding: 18px 20px;
+
+            border-bottom: 1px solid #eee;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .order-id {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .order-date {
+            color: #666;
+
+            margin-top: 5px;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status {
+            display: inline-block;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+            font-weight: bold;
+
+            background: #eee;
+        }
+
+        .status-new {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-confirmed {
+            background: #ede7f6;
+            color: #512da8;
+        }
+
+        .status-preparing {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-shipping {
+            background: #e0f7fa;
+            color: #006064;
+        }
+
+        .status-delivering {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .status-delivered {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+        .status-returned {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+
+        /* =====================================================
+           ORDER ITEMS
+        ===================================================== */
+
+        .order-items {
+            padding: 0 20px;
+        }
+
+        .order-item {
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr 1fr 1fr;
+
+            gap: 15px;
+
+            padding: 15px 0;
+
+            border-bottom: 1px solid #eee;
+
+            align-items: center;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: bold;
+        }
+
+        .item-price,
+        .item-quantity,
+        .item-subtotal {
+            text-align: right;
+        }
+
+        .item-subtotal {
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           ORDER INFORMATION
+        ===================================================== */
+
+        .order-info {
+            padding: 18px 20px;
+
+            border-top: 1px solid #eee;
+
+            background: #fafafa;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 10px 30px;
+        }
+
+        .order-info p {
+            margin: 4px 0;
+        }
+
+
+        /* =====================================================
+           TOTAL
+        ===================================================== */
+
+        .order-total {
+            padding: 18px 20px;
+
+            border-top: 1px solid #ddd;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-total span {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           EMPTY / ERROR
+        ===================================================== */
+
+        .message-box {
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            padding: 50px 20px;
+
+            text-align: center;
+
+            color: #666;
+        }
+
+        .error-message {
+            color: #b71c1c;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 800px) {
+
+            header {
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+
+                justify-content: center;
+            }
+
+            .order-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .order-item {
+                grid-template-columns: 1fr;
+            }
+
+            .item-price,
+            .item-quantity,
+            .item-subtotal {
+                text-align: left;
+            }
+
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header>
+
+    <div class="brand">
+
+        <h2>JWT Nimbus Demo</h2>
+
+        <small>
+            Spring Boot Security
+        </small>
+
+    </div>
+
+
+    <nav>
+
+        <a href="/index.html">
+            Trang chính
+        </a>
+
+        <a href="/products.html">
+            Sản phẩm
+        </a>
+
+        <a href="/cart.html">
+            Giỏ hàng
+        </a>
+
+        <a
+            href="/orders.html"
+            class="active"
+        >
+            Lịch sử đơn hàng
+        </a>
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            Đăng xuất
+        </button>
+
+    </nav>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main>
+
+    <div class="page-title">
+
+        <h1>Lịch sử đơn hàng</h1>
+
+        <p>
+            Theo dõi các đơn hàng và trạng thái xử lý.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTER
+    ====================================================== -->
+
+    <div class="filter-container">
+
+        <button
+            class="filter-button active"
+            data-status=""
+            onclick="filterOrders('', this)"
+        >
+            Tất cả
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="NEW"
+            onclick="filterOrders('NEW', this)"
+        >
+            Đơn hàng mới
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="CONFIRMED"
+            onclick="filterOrders('CONFIRMED', this)"
+        >
+            Đã xác nhận
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="PREPARING"
+            onclick="filterOrders('PREPARING', this)"
+        >
+            Chuẩn bị hàng
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="SHIPPING"
+            onclick="filterOrders('SHIPPING', this)"
+        >
+            Vận chuyển
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="DELIVERING"
+            onclick="filterOrders('DELIVERING', this)"
+        >
+            Giao hàng
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="DELIVERED"
+            onclick="filterOrders('DELIVERED', this)"
+        >
+            Đã giao
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="CANCELLED"
+            onclick="filterOrders('CANCELLED', this)"
+        >
+            Đơn hàng hủy
+        </button>
+
+
+        <button
+            class="filter-button"
+            data-status="RETURNED"
+            onclick="filterOrders('RETURNED', this)"
+        >
+            Đơn hàng hoàn
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         ORDERS
+    ====================================================== -->
+
+    <div id="ordersContainer">
+
+        <div class="message-box">
+            Đang tải lịch sử đơn hàng...
+        </div>
+
+    </div>
+
+</main>
+
+
+
+<script>
+
+    const API_URL = "";
+
+
+    // =====================================================
+    // TOKEN
+    // =====================================================
+
+    function getToken() {
+
+        return localStorage.getItem(
+            "jwtToken"
+        );
+    }
+
+
+    function requireLogin() {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+    // =====================================================
+    // LOAD ORDERS
+    // =====================================================
+
+    async function loadOrders(status = "") {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return;
+        }
+
+
+        const container =
+            document.getElementById(
+                "ordersContainer"
+            );
+
+
+        container.innerHTML = `
+            <div class="message-box">
+                Đang tải lịch sử đơn hàng...
+            </div>
+        `;
+
+
+        try {
+
+            let url =
+                API_URL
+                + "/orders/history";
+
+
+            if (status) {
+
+                url +=
+                    "?status="
+                    + encodeURIComponent(
+                        status
+                    );
+            }
+
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: "GET",
+
+                        headers: {
+
+                            "Authorization":
+                                "Bearer "
+                                + token
+                        }
+                    }
+                );
+
+
+            if (
+                response.status === 401
+                || response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "jwtToken"
+                );
+
+                window.location.href =
+                    "/index.html";
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Không thể tải lịch sử đơn hàng."
+                );
+            }
+
+
+            const orders =
+                await response.json();
+
+
+            renderOrders(
+                orders
+            );
+
+        }
+        catch (error) {
+
+            container.innerHTML = `
+                <div class="message-box error-message">
+                    ${escapeHtml(error.message)}
+                </div>
+            `;
+        }
+    }
+
+
+    // =====================================================
+    // FILTER
+    // =====================================================
+
+    function filterOrders(
+        status,
+        button
+    ) {
+
+        const buttons =
+            document.querySelectorAll(
+                ".filter-button"
+            );
+
+
+        buttons.forEach(
+            function(item) {
+
+                item.classList.remove(
+                    "active"
+                );
+            }
+        );
+
+
+        button.classList.add(
+            "active"
+        );
+
+
+        loadOrders(
+            status
+        );
+    }
+
+
+    // =====================================================
+    // RENDER ORDERS
+    // =====================================================
+
+    function renderOrders(
+        orders
+    ) {
+
+        const container =
+            document.getElementById(
+                "ordersContainer"
+            );
+
+
+        if (
+            !orders
+            || orders.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="message-box">
+
+                    <h3>
+                        Không có đơn hàng
+                    </h3>
+
+                    <p>
+                        Không tìm thấy đơn hàng
+                        phù hợp với trạng thái này.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        let html = "";
+
+
+        orders.forEach(
+            function(order) {
+
+                html +=
+                    createOrderHtml(
+                        order
+                    );
+            }
+        );
+
+
+        container.innerHTML =
+            html;
+    }
+
+
+    // =====================================================
+    // CREATE ORDER HTML
+    // =====================================================
+
+    function createOrderHtml(
+        order
+    ) {
+
+        let itemsHtml = "";
+
+
+        if (
+            order.items
+            && order.items.length > 0
+        ) {
+
+            order.items.forEach(
+                function(item) {
+
+                    const subtotal =
+                        Number(item.price)
+                        * Number(item.quantity);
+
+
+                    itemsHtml += `
+                        <div class="order-item">
+
+                            <div class="product-name">
+                                ${escapeHtml(
+                                    item.productName
+                                )}
+                            </div>
+
+
+                            <div class="item-price">
+
+                                ${formatMoney(
+                                    item.price
+                                )}
+
+                            </div>
+
+
+                            <div class="item-quantity">
+
+                                × ${item.quantity}
+
+                            </div>
+
+
+                            <div class="item-subtotal">
+
+                                ${formatMoney(
+                                    subtotal
+                                )}
+
+                            </div>
+
+                        </div>
+                    `;
+                }
+            );
+
+        } else {
+
+            itemsHtml = `
+                <div class="order-item">
+
+                    <div>
+                        Không có thông tin sản phẩm.
+                    </div>
+
+                </div>
+            `;
+        }
+
+
+        return `
+            <div class="order-card">
+
+                <div class="order-header">
+
+                    <div>
+
+                        <div class="order-id">
+                            Đơn hàng #${order.id}
+                        </div>
+
+                        <div class="order-date">
+
+                            ${formatDate(
+                                order.createdAt
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <span
+                        class="
+                            status
+                            ${getStatusClass(
+                                order.status
+                            )}
+                        "
+                    >
+
+                        ${getStatusText(
+                            order.status
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <div class="order-items">
+
+                    ${itemsHtml}
+
+                </div>
+
+
+                <div class="order-info">
+
+                    <p>
+                        <strong>
+                            Người nhận:
+                        </strong>
+
+                        ${escapeHtml(
+                            order.receiverName
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Số điện thoại:
+                        </strong>
+
+                        ${escapeHtml(
+                            order.phone
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Địa chỉ:
+                        </strong>
+
+                        ${escapeHtml(
+                            order.address
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Thanh toán:
+                        </strong>
+
+                        ${escapeHtml(
+                            order.paymentMethod
+                        )}
+                    </p>
+
+                </div>
+
+
+                <div class="order-total">
+
+                    <strong>
+                        Tổng tiền
+                    </strong>
+
+                    <span>
+
+                        ${formatMoney(
+                            order.totalAmount
+                        )}
+
+                    </span>
+
+                </div>
+
+            </div>
+        `;
+    }
+
+
+    // =====================================================
+    // STATUS TEXT
+    // =====================================================
+
+    function getStatusText(
+        status
+    ) {
+
+        switch (status) {
+
+            case "NEW":
+                return "Đơn hàng mới";
+
+            case "CONFIRMED":
+                return "Đã xác nhận";
+
+            case "PREPARING":
+                return "Chuẩn bị hàng";
+
+            case "SHIPPING":
+                return "Vận chuyển";
+
+            case "DELIVERING":
+                return "Giao hàng";
+
+            case "DELIVERED":
+                return "Đã giao";
+
+            case "CANCELLED":
+                return "Đơn hàng hủy";
+
+            case "RETURNED":
+                return "Đơn hàng hoàn";
+
+            default:
+                return status;
+        }
+    }
+
+
+    // =====================================================
+    // STATUS CSS
+    // =====================================================
+
+    function getStatusClass(
+        status
+    ) {
+
+        switch (status) {
+
+            case "NEW":
+                return "status-new";
+
+            case "CONFIRMED":
+                return "status-confirmed";
+
+            case "PREPARING":
+                return "status-preparing";
+
+            case "SHIPPING":
+                return "status-shipping";
+
+            case "DELIVERING":
+                return "status-delivering";
+
+            case "DELIVERED":
+                return "status-delivered";
+
+            case "CANCELLED":
+                return "status-cancelled";
+
+            case "RETURNED":
+                return "status-returned";
+
+            default:
+                return "";
+        }
+    }
+
+
+    // =====================================================
+    // FORMAT MONEY
+    // =====================================================
+
+    function formatMoney(
+        value
+    ) {
+
+        return Number(value)
+            .toLocaleString(
+                "vi-VN",
+                {
+                    style: "currency",
+                    currency: "VND"
+                }
+            );
+    }
+
+
+    // =====================================================
+    // FORMAT DATE
+    // =====================================================
+
+    function formatDate(
+        value
+    ) {
+
+        if (!value) {
+
+            return "";
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return value;
+        }
+
+
+        return date.toLocaleString(
+            "vi-VN"
+        );
+    }
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHtml(
+        value
+    ) {
+
+        if (
+            value === null
+            || value === undefined
+        ) {
+
+            return "";
+        }
+
+
+        return String(value)
+
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+    }
+
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "jwtToken"
+        );
+
+
+        window.location.href =
+            "/index.html";
+    }
+
+
+    // =====================================================
+    // LOAD PAGE
+    // =====================================================
+
+    window.onload =
+        function() {
+
+            if (requireLogin()) {
+
+                loadOrders();
+            }
+        };
+
+</script>
+
+
+</body>
+
+</html>

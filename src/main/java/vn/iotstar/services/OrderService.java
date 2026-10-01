@@ -2,22 +2,28 @@ package vn.iotstar.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import vn.iotstar.dto.CheckoutRequest;
+import vn.iotstar.dto.OrderItemResponse;
+import vn.iotstar.dto.OrderResponse;
+
 import vn.iotstar.entity.CartItem;
 import vn.iotstar.entity.Order;
 import vn.iotstar.entity.OrderItem;
 import vn.iotstar.entity.OrderStatus;
 import vn.iotstar.entity.Product;
 import vn.iotstar.entity.User;
+
 import vn.iotstar.repository.CartItemRepository;
 import vn.iotstar.repository.OrderItemRepository;
 import vn.iotstar.repository.OrderRepository;
 import vn.iotstar.repository.ProductRepository;
+
 
 @Service
 public class OrderService {
@@ -300,5 +306,150 @@ public class OrderService {
         // =================================================
 
         return order;
+    }
+
+
+    // =====================================================
+    // LẤY LỊCH SỬ ĐƠN HÀNG
+    // =====================================================
+
+    public List<OrderResponse> getOrderHistory(
+            User user,
+            OrderStatus status) {
+
+        List<Order> orders;
+
+
+        // Không truyền status -> lấy tất cả đơn hàng
+        if (status == null) {
+
+            orders =
+                    orderRepository
+                            .findByUserOrderByCreatedAtDesc(
+                                    user
+                            );
+
+        } else {
+
+            // Có status -> lọc theo trạng thái
+            orders =
+                    orderRepository
+                            .findByUserAndStatusOrderByCreatedAtDesc(
+                                    user,
+                                    status
+                            );
+        }
+
+
+        List<OrderResponse> responses =
+                new ArrayList<>();
+
+
+        for (Order order : orders) {
+
+            responses.add(
+                    convertToResponse(
+                            order
+                    )
+            );
+        }
+
+
+        return responses;
+    }
+
+
+    // =====================================================
+    // CHUYỂN ORDER -> ORDER RESPONSE
+    // =====================================================
+
+    private OrderResponse convertToResponse(
+            Order order) {
+
+        OrderResponse response =
+                new OrderResponse();
+
+
+        // =================================================
+        // THÔNG TIN ĐƠN HÀNG
+        // =================================================
+
+        response.setId(
+                order.getId()
+        );
+
+
+        response.setReceiverName(
+                order.getReceiverName()
+        );
+
+
+        response.setPhone(
+                order.getPhone()
+        );
+
+
+        response.setAddress(
+                order.getAddress()
+        );
+
+
+        response.setTotalAmount(
+                order.getTotalAmount()
+        );
+
+
+        response.setPaymentMethod(
+                order.getPaymentMethod()
+        );
+
+
+        response.setStatus(
+                order.getStatus().name()
+        );
+
+
+        response.setCreatedAt(
+                order.getCreatedAt()
+        );
+
+
+        // =================================================
+        // LẤY DANH SÁCH SẢN PHẨM CỦA ĐƠN
+        // =================================================
+
+        List<OrderItem> orderItems =
+                orderItemRepository.findByOrder(
+                        order
+                );
+
+
+        List<OrderItemResponse> itemResponses =
+                new ArrayList<>();
+
+
+        for (OrderItem item : orderItems) {
+
+            OrderItemResponse itemResponse =
+                    new OrderItemResponse(
+                            item.getProduct().getId(),
+                            item.getProduct().getName(),
+                            item.getPrice(),
+                            item.getQuantity()
+                    );
+
+
+            itemResponses.add(
+                    itemResponse
+            );
+        }
+
+
+        response.setItems(
+                itemResponses
+        );
+
+
+        return response;
     }
 }

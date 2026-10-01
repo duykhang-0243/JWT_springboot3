@@ -33,14 +33,15 @@ public class SecurityConfiguration {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/products.html",
-                                "/cart.html",
-                                "/auth/**"
-                        )
-                        .permitAll()
+                		.requestMatchers(
+                		        "/",
+                		        "/index.html",
+                		        "/products.html",
+                		        "/cart.html",
+                		        "/orders.html",
+                		        "/auth/**"
+                		)
+                		.permitAll()
 
                         .anyRequest()
                         .authenticated()
