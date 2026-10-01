@@ -36,6 +36,8 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/",
                                 "/index.html",
+                                "/products.html",
+                                "/cart.html",
                                 "/auth/**"
                         )
                         .permitAll()

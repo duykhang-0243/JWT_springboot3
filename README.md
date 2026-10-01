@@ -1,695 +1,663 @@
-# HƯỚNG DẪN TEST YÊU CẦU 2 - JWT VỚI NIMBUS JOSE + JWT
+# Hướng dẫn kiểm thử hệ thống
 
-## 1. Mục tiêu
+## 1. Tài khoản kiểm thử
 
-Yêu cầu 2 thực hiện:
+Sử dụng tài khoản:
 
-> Sử dụng thư viện **Nimbus JOSE + JWT** thay thế thư viện **JJWT** ở Yêu cầu 1.
+| Thông tin | Giá trị |
+|---|---|
+| User ID | 1 |
+| Họ tên | Nguyễn Văn A |
+| Email | `user1@gmail.com` |
+| Mật khẩu | Sử dụng mật khẩu đã đăng ký cho tài khoản |
 
-Các chức năng của hệ thống vẫn giữ nguyên:
+---
 
-1. Tạo tài khoản.
-2. Đăng nhập.
-3. Sinh JWT sau khi đăng nhập thành công.
-4. Dùng JWT để lấy thông tin người dùng đang đăng nhập.
-5. Dùng JWT để lấy danh sách người dùng.
+## 2. Test đăng nhập
 
-Điểm thay đổi chính:
+### Bước 1: Khởi động hệ thống
+
+Khởi động MySQL và chạy Spring Boot.
+
+Nếu hệ thống chạy thành công, Console sẽ hiển thị:
 
 ```text
-YÊU CẦU 1
-JJWT
-│
-├── Jwts.builder()
-├── Jwts.parser()
-└── SecretKey
+Tomcat started on port 8005
+```
 
+Mở trình duyệt:
 
-          ↓ THAY THẾ ↓
+```text
+http://localhost:8005/
+```
 
+### Bước 2: Đăng nhập
 
-YÊU CẦU 2
-Nimbus JOSE + JWT
-│
-├── JWTClaimsSet
-├── SignedJWT
-├── MACSigner
-└── MACVerifier
+Nhập:
+
+```text
+Email: user1@gmail.com
+Password: <mật khẩu của tài khoản>
+```
+
+Nhấn:
+
+```text
+Đăng nhập
+```
+
+### Kết quả mong đợi
+
+Hệ thống chuyển sang trang chính và hiển thị:
+
+```text
+Thông tin tài khoản
+
+ID:     1
+Họ tên: Nguyễn Văn A
+Email:  user1@gmail.com
+```
+
+JWT Token cũng được tạo và lưu trong `localStorage`.
+
+---
+
+## 3. Test trang sản phẩm
+
+Từ trang chính, chọn:
+
+```text
+Sản phẩm
+```
+
+hoặc truy cập:
+
+```text
+http://localhost:8005/products.html
+```
+
+### Kết quả mong đợi
+
+Danh sách sản phẩm được hiển thị, ví dụ:
+
+```text
+Chicken Burrito
+65.000 VNĐ
+Tồn kho: 10
+[Thêm vào giỏ]
+
+Beef Burrito
+75.000 VNĐ
+Tồn kho: 8
+[Thêm vào giỏ]
+
+Chicken Taco
+45.000 VNĐ
+Tồn kho: 15
+[Thêm vào giỏ]
+
+Beef Taco
+55.000 VNĐ
+Tồn kho: 12
+[Thêm vào giỏ]
+
+Chicken Bowl
+70.000 VNĐ
+Tồn kho: 10
+[Thêm vào giỏ]
+
+Beef Bowl
+80.000 VNĐ
+Tồn kho: 6
+[Thêm vào giỏ]
 ```
 
 ---
 
-# 2. Kiểm tra thư viện Nimbus
+## 4. Test thêm sản phẩm vào giỏ hàng
 
-Trong `pom.xml` phải có:
-
-```xml
-<!-- Nimbus JOSE + JWT -->
-<dependency>
-    <groupId>com.nimbusds</groupId>
-    <artifactId>nimbus-jose-jwt</artifactId>
-    <version>10.5</version>
-</dependency>
-```
-
-Không còn các thư viện JJWT:
+Chọn:
 
 ```text
-jjwt-api
-jjwt-impl
-jjwt-jackson
+Chicken Burrito
 ```
 
-Sau khi sửa `pom.xml`, trong STS:
+Nhấn:
 
 ```text
-Right Click project
-→ Maven
-→ Update Project...
-→ chọn JWT_springboot3
-→ OK
+Thêm vào giỏ
 ```
 
----
+### Kết quả mong đợi
 
-# 3. Kiểm tra JwtService
-
-`JwtService.java` phải sử dụng các class của Nimbus:
-
-```java
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
-```
-
-Không còn:
-
-```java
-import io.jsonwebtoken.*;
-```
-
-Nimbus được sử dụng để:
+Hệ thống thông báo:
 
 ```text
-JWTClaimsSet
-      ↓
-Tạo Claims/Payload
-
-JWSHeader
-      ↓
-Tạo Header với HS256
-
-SignedJWT
-      ↓
-Tạo JWT
-
-MACSigner
-      ↓
-Ký JWT bằng Secret Key
-
-MACVerifier
-      ↓
-Xác thực chữ ký JWT
+Đã thêm sản phẩm vào giỏ hàng.
 ```
 
----
-
-# 4. Chuẩn bị Database
-
-Khởi động MySQL.
-
-Database sử dụng:
+Kiểm tra Database:
 
 ```sql
-CREATE DATABASE jwt_springboot3;
+SELECT *
+FROM cart_items
+WHERE user_id = 1;
 ```
 
-Nếu database đã được tạo khi làm Yêu cầu 1 thì không cần tạo lại.
+Phải xuất hiện một dòng tương ứng với Chicken Burrito:
 
-Có thể kiểm tra:
+```text
+user_id  = 1
+quantity = 1
+```
+
+---
+
+## 5. Test thêm cùng sản phẩm nhiều lần
+
+Tại trang sản phẩm, nhấn:
+
+```text
+Thêm vào giỏ
+```
+
+Chicken Burrito thêm một lần nữa.
+
+### Kết quả mong đợi
+
+Hệ thống không tạo một `cart_items` mới cho cùng sản phẩm.
+
+Thay vào đó:
+
+```text
+quantity: 1 → 2
+```
+
+Kiểm tra:
 
 ```sql
-SHOW DATABASES;
+SELECT *
+FROM cart_items
+WHERE user_id = 1;
 ```
 
-Sau đó:
+Kết quả phải có:
+
+```text
+Chicken Burrito
+quantity = 2
+```
+
+---
+
+## 6. Test trang giỏ hàng
+
+Chọn:
+
+```text
+Giỏ hàng
+```
+
+hoặc truy cập:
+
+```text
+http://localhost:8005/cart.html
+```
+
+### Kết quả mong đợi
+
+Hiển thị:
+
+```text
+Chicken Burrito
+
+Giá: 65.000 VNĐ
+Tồn kho: 10
+
+[-] [2] [+]
+
+Thành tiền: 130.000 VNĐ
+```
+
+Tổng tiền:
+
+```text
+130.000 VNĐ
+```
+
+---
+
+## 7. Test tăng số lượng
+
+Nhấn:
+
+```text
++
+```
+
+### Kết quả mong đợi
+
+```text
+quantity: 2 → 3
+```
+
+Thành tiền:
+
+```text
+65.000 × 3
+= 195.000 VNĐ
+```
+
+Kiểm tra Database:
 
 ```sql
-USE jwt_springboot3;
-
-SELECT * FROM users;
+SELECT *
+FROM cart_items
+WHERE user_id = 1;
 ```
 
-Dữ liệu user của Yêu cầu 1 có thể tiếp tục được sử dụng.
-
----
-
-# 5. Kiểm tra application.properties
-
-Mở:
+Phải có:
 
 ```text
-src/main/resources/application.properties
-```
-
-Cấu hình:
-
-```properties
-spring.application.name=JWT_springboot3
-
-server.port=8005
-
-spring.datasource.url=jdbc:mysql://localhost:3306/jwt_springboot3?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
-spring.datasource.username=root
-spring.datasource.password=123456
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.open-in-view=false
-
-security.jwt.secret-key=3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
-security.jwt.expiration-time=3600000
-```
-
-Trong đó:
-
-```text
-security.jwt.secret-key
-```
-
-là Secret Key được Nimbus sử dụng để ký và xác thực JWT.
-
-```text
-security.jwt.expiration-time=3600000
-```
-
-tương ứng thời gian hiệu lực:
-
-```text
-3.600.000 ms = 1 giờ
+quantity = 3
 ```
 
 ---
 
-# 6. Chạy Project
+## 8. Test giảm số lượng
 
-Trong STS:
+Nhấn:
 
 ```text
-Right Click JWT_springboot3
-→ Run As
-→ Spring Boot App
+-
 ```
 
-Nếu project chạy thành công, server hoạt động tại:
+### Kết quả mong đợi
 
 ```text
-http://localhost:8005
+quantity: 3 → 2
 ```
 
-Giữ Spring Boot chạy trong STS trong suốt quá trình test.
-
----
-
-# 7. Mở CMD để test
-
-Trên Windows:
+Tổng tiền trở lại:
 
 ```text
-Windows + R
-→ nhập cmd
-→ Enter
+130.000 VNĐ
 ```
 
-Thực hiện test theo thứ tự:
+Hệ thống không cho giảm số lượng xuống dưới:
 
 ```text
-Create Account
-      ↓
-Login
-      ↓
-Nimbus tạo JWT
-      ↓
-Copy JWT
-      ↓
-GET /users/me
-      ↓
-GET /users
+1
 ```
 
 ---
 
-# 8. TEST 1 - Tạo tài khoản
+## 9. Test giới hạn tồn kho
 
-Trong CMD chạy:
-
-```bat
-curl -X POST http://localhost:8005/auth/signup ^
--H "Content-Type: application/json" ^
--d "{\"email\":\"user2@gmail.com\",\"password\":\"123456\",\"fullName\":\"Nguyen Van B\"}"
-```
-
-Request tương ứng:
+Chicken Burrito có:
 
 ```text
-POST /auth/signup
+stock = 10
 ```
 
-với dữ liệu:
+Thử tăng số lượng đến:
 
-```json
-{
-    "email": "user2@gmail.com",
-    "password": "123456",
-    "fullName": "Nguyen Van B"
-}
+```text
+10
 ```
 
-## Kết quả mong đợi
+### Kết quả mong đợi
 
-Server trả về thông tin tài khoản vừa tạo.
-
-Ví dụ:
-
-```json
-{
-    "id": 2,
-    "fullname": "Nguyen Van B",
-    "email": "user2@gmail.com",
-    "images": ""
-}
+```text
+quantity = 10
 ```
 
-Có thể kiểm tra trong MySQL:
+Nút `+` bị vô hiệu hóa.
 
-```sql
-USE jwt_springboot3;
+Hệ thống không cho:
 
-SELECT * FROM users;
+```text
+quantity > 10
 ```
+
+Backend cũng kiểm tra tồn kho nên không thể vượt giới hạn bằng cách chỉnh request từ phía trình duyệt.
 
 ---
 
-# 9. TEST 2 - Đăng nhập và tạo JWT bằng Nimbus
+## 10. Chuẩn bị test COD
 
-Sau khi tạo tài khoản, chạy:
-
-```bat
-curl -X POST http://localhost:8005/auth/login ^
--H "Content-Type: application/json" ^
--d "{\"email\":\"user2@gmail.com\",\"password\":\"123456\"}"
-```
-
-Request:
+Để dễ kiểm tra, đặt lại giỏ hàng thành:
 
 ```text
-POST /auth/login
+Chicken Burrito × 2
 ```
 
-Dữ liệu đăng nhập:
-
-```json
-{
-    "email": "user2@gmail.com",
-    "password": "123456"
-}
-```
-
-## Quá trình xử lý
-
-Sau khi email và password được xác thực:
+Giá:
 
 ```text
-AuthenticationController
-        ↓
-AuthenticationService
-        ↓
-AuthenticationManager
-        ↓
-Đăng nhập thành công
-        ↓
-JwtService.generateToken()
-        ↓
-Nimbus JOSE + JWT
-        ↓
-JWTClaimsSet
-        ↓
-JWSHeader (HS256)
-        ↓
-SignedJWT
-        ↓
-MACSigner
-        ↓
-JWT
+65.000 VNĐ / sản phẩm
 ```
 
-## Kết quả mong đợi
-
-Server trả về:
-
-```json
-{
-    "token": "eyJhbGciOiJIUzI1NiJ9...",
-    "expiresIn": 3600000
-}
-```
-
-Trong đó:
-
-- `token`: JWT được tạo bằng Nimbus.
-- `expiresIn`: thời gian hiệu lực của JWT.
-
-Copy toàn bộ giá trị của:
+Tổng tiền trước khi checkout:
 
 ```text
-token
+65.000 × 2
+= 130.000 VNĐ
 ```
 
-Ví dụ:
-
-```text
-eyJhbGciOiJIUzI1NiJ9....
-```
-
-Không copy:
-
-```text
-"token":
-```
-
----
-
-# 10. TEST 3 - Lấy User đang đăng nhập
-
-Sử dụng JWT vừa nhận được.
+### Kiểm tra Database trước khi đặt hàng
 
 Chạy:
 
-```bat
-curl -X GET http://localhost:8005/users/me ^
--H "Authorization: Bearer YOUR_TOKEN"
+```sql
+SELECT id, name, price, stock
+FROM products;
+
+SELECT *
+FROM cart_items
+WHERE user_id = 1;
+
+SELECT *
+FROM orders;
+
+SELECT *
+FROM order_items;
 ```
 
-Thay:
-
-```text
-YOUR_TOKEN
-```
-
-bằng JWT nhận được từ `/auth/login`.
+Ghi nhận stock hiện tại của Chicken Burrito.
 
 Ví dụ:
 
-```bat
-curl -X GET http://localhost:8005/users/me ^
--H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9..."
-```
-
-## Quá trình xử lý
-
-JWT được gửi lên bằng:
-
 ```text
-Authorization: Bearer <JWT>
-```
-
-Sau đó:
-
-```text
-Request
-   ↓
-JwtAuthenticationFilter
-   ↓
-Lấy Bearer Token
-   ↓
-JwtService.extractUsername()
-   ↓
-SignedJWT.parse()
-   ↓
-Lấy email từ JWT
-   ↓
-Tìm User
-   ↓
-JwtService.isTokenValid()
-   ↓
-MACVerifier
-   ↓
-Kiểm tra chữ ký + thời gian hết hạn
-   ↓
-SecurityContextHolder
-   ↓
-UserController
-```
-
-## Kết quả mong đợi
-
-Server trả về thông tin user đang đăng nhập.
-
-Ví dụ:
-
-```json
-{
-    "id": 2,
-    "fullname": "Nguyen Van B",
-    "email": "user2@gmail.com",
-    "images": ""
-}
-```
-
-Email phải đúng với tài khoản vừa login:
-
-```text
-user2@gmail.com
+stock trước khi đặt = 10
 ```
 
 ---
 
-# 11. TEST 4 - Lấy danh sách User
+## 11. Test thanh toán COD
 
-Tiếp tục sử dụng JWT vừa nhận được.
+Tại trang:
+
+```text
+http://localhost:8005/cart.html
+```
+
+Nhập thông tin nhận hàng.
+
+Ví dụ:
+
+```text
+Họ tên người nhận:
+Nguyễn Văn A
+
+Số điện thoại:
+0901234567
+
+Địa chỉ:
+Thủ Đức, TP.HCM
+```
+
+Phương thức thanh toán:
+
+```text
+Thanh toán khi nhận hàng (COD)
+```
+
+Nhấn:
+
+```text
+ĐẶT HÀNG COD
+```
+
+### Kết quả mong đợi
+
+Hệ thống thông báo:
+
+```text
+Đặt hàng thành công!
+
+Mã đơn hàng: #...
+Thanh toán: COD
+Trạng thái: NEW
+```
+
+Sau đó giỏ hàng phải chuyển thành:
+
+```text
+Giỏ hàng đang trống
+
+Bạn chưa thêm sản phẩm nào.
+```
+
+---
+
+## 12. Kiểm tra bảng orders
 
 Chạy:
 
-```bat
-curl -X GET http://localhost:8005/users ^
--H "Authorization: Bearer YOUR_TOKEN"
+```sql
+SELECT *
+FROM orders
+WHERE user_id = 1
+ORDER BY id DESC;
 ```
 
-Thay:
+Đơn vừa tạo phải có:
 
 ```text
-YOUR_TOKEN
-```
-
-bằng JWT thật.
-
-Ví dụ:
-
-```bat
-curl -X GET http://localhost:8005/users ^
--H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9..."
-```
-
-## Kết quả mong đợi
-
-Server trả về danh sách user.
-
-Ví dụ:
-
-```json
-[
-    {
-        "id": 1,
-        "fullname": "Nguyen Van A",
-        "email": "user1@gmail.com"
-    },
-    {
-        "id": 2,
-        "fullname": "Nguyen Van B",
-        "email": "user2@gmail.com"
-    }
-]
+user_id         = 1
+receiver_name   = Nguyễn Văn A
+phone           = 0901234567
+address         = Thủ Đức, TP.HCM
+total_amount    = 130000
+payment_method  = COD
+status          = NEW
+created_at      = thời điểm đặt hàng
 ```
 
 ---
 
-# 12. Thứ tự test hoàn chỉnh
+## 13. Kiểm tra order_items
 
-## Bước 1 - Signup
+Lấy ID đơn vừa tạo rồi kiểm tra:
 
-```bat
-curl -X POST http://localhost:8005/auth/signup ^
--H "Content-Type: application/json" ^
--d "{\"email\":\"user2@gmail.com\",\"password\":\"123456\",\"fullName\":\"Nguyen Van B\"}"
+```sql
+SELECT *
+FROM order_items
+ORDER BY id DESC;
 ```
 
-↓
+Với Chicken Burrito × 2, phải có dữ liệu tương ứng:
 
-## Bước 2 - Login
-
-```bat
-curl -X POST http://localhost:8005/auth/login ^
--H "Content-Type: application/json" ^
--d "{\"email\":\"user2@gmail.com\",\"password\":\"123456\"}"
+```text
+price     = 65000
+quantity  = 2
 ```
 
-↓
+Giá `65000` được lưu tại thời điểm đặt hàng để đảm bảo lịch sử đơn không bị ảnh hưởng nếu giá sản phẩm thay đổi sau này.
 
-Kết quả:
+---
 
-```json
-{
-    "token": "...",
-    "expiresIn": 3600000
-}
+## 14. Kiểm tra tồn kho sau khi đặt COD
+
+Chạy:
+
+```sql
+SELECT id, name, price, stock
+FROM products
+WHERE name = 'Chicken Burrito';
 ```
 
-↓
+Nếu trước khi đặt:
 
-Copy `token`.
-
-↓
-
-## Bước 3 - Current User
-
-```bat
-curl -X GET http://localhost:8005/users/me ^
--H "Authorization: Bearer YOUR_TOKEN"
+```text
+stock = 10
 ```
 
-↓
+và Nguyễn Văn A mua:
 
-## Bước 4 - All Users
+```text
+quantity = 2
+```
 
-```bat
-curl -X GET http://localhost:8005/users ^
--H "Authorization: Bearer YOUR_TOKEN"
+thì sau khi đặt:
+
+```text
+stock = 8
+```
+
+Theo công thức:
+
+```text
+stock mới
+= stock cũ - quantity
+
+= 10 - 2
+
+= 8
 ```
 
 ---
 
-# 13. Bảng tổng hợp
+## 15. Kiểm tra giỏ hàng sau khi đặt
 
-| STT | Method | API | JWT | Kết quả |
-|---:|---|---|---|---|
-| 1 | POST | `/auth/signup` | Không | Tạo tài khoản |
-| 2 | POST | `/auth/login` | Không | Đăng nhập và Nimbus tạo JWT |
-| 3 | GET | `/users/me` | Bearer Token | Trả user đang đăng nhập |
-| 4 | GET | `/users` | Bearer Token | Trả danh sách user |
+Chạy:
+
+```sql
+SELECT *
+FROM cart_items
+WHERE user_id = 1;
+```
+
+### Kết quả mong đợi
+
+Không còn sản phẩm vừa thanh toán trong giỏ của User ID 1.
+
+Điều này xác nhận quy trình:
+
+```text
+Cart
+ ↓
+Checkout COD
+ ↓
+Order
+ ↓
+OrderItem
+ ↓
+Trừ Stock
+ ↓
+Xóa Cart
+```
+
+đã thực hiện thành công.
 
 ---
 
-# 14. Điểm khác Yêu cầu 1 và Yêu cầu 2
+## 16. Test trường hợp giỏ hàng trống
 
-## Yêu cầu 1 - JJWT
+Sau khi đặt hàng thành công, giỏ của Nguyễn Văn A đang trống.
 
-Tạo JWT:
+Nếu thực hiện checkout khi không có sản phẩm, Backend phải từ chối tạo đơn.
 
-```text
-Jwts.builder()
-→ claims
-→ subject
-→ expiration
-→ signWith()
-→ compact()
-```
-
-Xác thực JWT:
+### Kết quả mong đợi
 
 ```text
-Jwts.parser()
-→ verifyWith()
-→ parseSignedClaims()
+Giỏ hàng đang trống.
 ```
 
-## Yêu cầu 2 - Nimbus JOSE + JWT
-
-Tạo JWT:
+Không được tạo thêm dữ liệu trong:
 
 ```text
-JWTClaimsSet
-      ↓
-JWSHeader
-      ↓
-SignedJWT
-      ↓
-MACSigner
-      ↓
-sign()
-      ↓
-serialize()
+orders
+order_items
 ```
-
-Xác thực JWT:
-
-```text
-SignedJWT.parse()
-      ↓
-MACVerifier
-      ↓
-verify()
-      ↓
-JWTClaimsSet
-      ↓
-Kiểm tra subject
-      ↓
-Kiểm tra expiration
-```
-
-Các API bên ngoài không thay đổi.
-
-Thay đổi nằm ở thư viện được sử dụng bên trong `JwtService`.
 
 ---
 
-# 15. Kết quả hoàn thành Yêu cầu 2
+## 17. Test đăng xuất
 
-Yêu cầu 2 hoàn thành khi chạy được luồng:
-
-```text
-POST /auth/signup
-        ↓
-Tạo User
-
-POST /auth/login
-        ↓
-Xác thực tài khoản
-        ↓
-Nimbus tạo JWT
-        ↓
-Trả JWT cho Client
-
-GET /users/me
-Authorization: Bearer <JWT>
-        ↓
-Nimbus xác thực JWT
-        ↓
-Trả User hiện tại
-
-GET /users
-Authorization: Bearer <JWT>
-        ↓
-Nimbus xác thực JWT
-        ↓
-Trả danh sách User
-```
-
-Đồng thời kiểm tra source code:
+Nhấn:
 
 ```text
-pom.xml
-    ↓
-có com.nimbusds:nimbus-jose-jwt
-
-JwtService.java
-    ↓
-có com.nimbusds.*
-
-không còn
-    ↓
-io.jsonwebtoken.*
+Đăng xuất
 ```
 
-Nếu 4 API trên hoạt động và JWT được tạo/xác thực bằng Nimbus thì Yêu cầu 2 hoàn thành.
+### Kết quả mong đợi
+
+JWT bị xóa khỏi:
+
+```text
+localStorage
+```
+
+và người dùng quay lại trang đăng nhập.
+
+Sau đó thử truy cập:
+
+```text
+http://localhost:8005/products.html
+```
+
+hoặc:
+
+```text
+http://localhost:8005/cart.html
+```
+
+khi không có JWT.
+
+Hệ thống phải chuyển người dùng về:
+
+```text
+/index.html
+```
+
+để đăng nhập.
+
+---
+
+## 18. Kết quả kiểm thử tổng thể
+
+Với tài khoản:
+
+```text
+ID:     1
+Họ tên: Nguyễn Văn A
+Email:  user1@gmail.com
+```
+
+luồng kiểm thử hoàn chỉnh là:
+
+```text
+Đăng nhập
+   ↓
+Xác thực JWT
+   ↓
+Trang chính
+   ↓
+Xem sản phẩm
+   ↓
+Thêm Chicken Burrito × 2
+   ↓
+Giỏ hàng
+   ↓
+Tổng tiền = 130.000 VNĐ
+   ↓
+Nhập thông tin nhận hàng
+   ↓
+Đặt hàng COD
+   ↓
+Order được tạo
+   ↓
+status = NEW
+   ↓
+OrderItem được tạo
+   ↓
+Stock giảm 10 → 8
+   ↓
+Cart của User ID 1 được xóa
+   ↓
+Đặt hàng thành công
+```
+
+Nếu toàn bộ kết quả trên đúng, chức năng **giỏ hàng và thanh toán COD** hoạt động đúng theo yêu cầu.

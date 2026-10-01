@@ -10,6 +10,8 @@
     >
 
     <title>Giỏ hàng - JWT Nimbus Demo</title>
+	
+	
 
     <style>
 
@@ -25,6 +27,109 @@
         }
 
 
+		/* =====================================================
+		   CHECKOUT COD
+		===================================================== */
+
+		.checkout-section {
+		    margin-top: 20px;
+
+		    background: white;
+
+		    border: 1px solid #ddd;
+		    border-radius: 10px;
+
+		    padding: 25px;
+		}
+
+		.checkout-section h2 {
+		    margin-top: 0;
+		    margin-bottom: 5px;
+		}
+
+		.checkout-description {
+		    color: #666;
+		    margin-bottom: 25px;
+		}
+
+		.form-group {
+		    margin-bottom: 18px;
+		}
+
+		.form-group label {
+		    display: block;
+
+		    margin-bottom: 7px;
+
+		    font-weight: bold;
+		}
+
+		.form-group input,
+		.form-group textarea {
+		    width: 100%;
+
+		    padding: 11px;
+
+		    border: 1px solid #bbb;
+		    border-radius: 6px;
+
+		    font-family: Arial, sans-serif;
+		    font-size: 14px;
+		}
+
+		.form-group textarea {
+		    resize: vertical;
+		}
+
+		.payment-method {
+		    margin-top: 20px;
+
+		    padding: 15px;
+
+		    background: #f5f7fa;
+
+		    border-radius: 6px;
+		}
+
+		.cod-option {
+		    margin-top: 12px;
+
+		    display: flex;
+		    align-items: center;
+
+		    gap: 8px;
+		}
+
+		.cod-option input {
+		    width: auto;
+		}
+
+		.cod-option label {
+		    cursor: pointer;
+		}
+
+		.checkout-button {
+		    width: 100%;
+
+		    margin-top: 20px;
+
+		    padding: 14px;
+
+		    font-size: 16px;
+		    font-weight: bold;
+
+		    background: #222;
+		}
+
+		.checkout-button:hover {
+		    background: #444;
+		}
+
+		.checkout-button:disabled {
+		    background: #aaa;
+		    cursor: not-allowed;
+		}
+		
         /* =====================================================
            HEADER
         ===================================================== */
@@ -428,6 +533,101 @@
         </span>
 
     </div>
+	<!-- =========================================================
+	     CHECKOUT COD
+	========================================================= -->
+
+	<div
+	    id="checkoutSection"
+	    class="checkout-section"
+	    style="display: none;"
+	>
+
+	    <h2>Thông tin nhận hàng</h2>
+
+	    <p class="checkout-description">
+	        Vui lòng nhập thông tin để đặt hàng.
+	    </p>
+
+
+	    <div class="form-group">
+
+	        <label for="receiverName">
+	            Họ tên người nhận
+	        </label>
+
+	        <input
+	            type="text"
+	            id="receiverName"
+	            placeholder="Nguyễn Văn A"
+	        >
+
+	    </div>
+
+
+	    <div class="form-group">
+
+	        <label for="phone">
+	            Số điện thoại
+	        </label>
+
+	        <input
+	            type="tel"
+	            id="phone"
+	            placeholder="0901234567"
+	        >
+
+	    </div>
+
+
+	    <div class="form-group">
+
+	        <label for="address">
+	            Địa chỉ nhận hàng
+	        </label>
+
+	        <textarea
+	            id="address"
+	            rows="4"
+	            placeholder="Nhập địa chỉ nhận hàng"
+	        ></textarea>
+
+	    </div>
+
+
+	    <div class="payment-method">
+
+	        <strong>
+	            Phương thức thanh toán
+	        </strong>
+
+	        <div class="cod-option">
+
+	            <input
+	                type="radio"
+	                id="paymentCOD"
+	                name="paymentMethod"
+	                checked
+	            >
+
+	            <label for="paymentCOD">
+	                Thanh toán khi nhận hàng (COD)
+	            </label>
+
+	        </div>
+
+	    </div>
+
+
+	    <button
+	        id="checkoutButton"
+	        class="checkout-button"
+	        onclick="checkoutCOD()"
+	    >
+	        ĐẶT HÀNG COD
+	    </button>
+
+	</div>
 
 </main>
 
@@ -571,6 +771,10 @@
                 "cartSummary"
             );
 
+			const checkoutSection =
+			    document.getElementById(
+			        "checkoutSection"
+			    );
 
         if (cartItems.length === 0) {
 
@@ -596,6 +800,8 @@
             summary.style.display =
                 "none";
 
+			checkoutSection.style.display =
+				"none";
 
             return;
         }
@@ -749,6 +955,9 @@
 
         summary.style.display =
             "flex";
+			
+		checkoutSection.style.display =
+			"block";
     }
 
 
@@ -1077,7 +1286,216 @@
             "/index.html";
     }
 
+	// =====================================================
+	// CHECKOUT COD
+	// =====================================================
 
+	async function checkoutCOD() {
+
+	    const receiverName =
+	        document.getElementById(
+	            "receiverName"
+	        ).value.trim();
+
+
+	    const phone =
+	        document.getElementById(
+	            "phone"
+	        ).value.trim();
+
+
+	    const address =
+	        document.getElementById(
+	            "address"
+	        ).value.trim();
+
+
+	    // =================================================
+	    // KIỂM TRA DỮ LIỆU
+	    // =================================================
+
+	    if (!receiverName) {
+
+	        showMessage(
+	            "Vui lòng nhập họ tên người nhận.",
+	            false
+	        );
+
+	        return;
+	    }
+
+
+	    if (!phone) {
+
+	        showMessage(
+	            "Vui lòng nhập số điện thoại.",
+	            false
+	        );
+
+	        return;
+	    }
+
+
+	    if (!address) {
+
+	        showMessage(
+	            "Vui lòng nhập địa chỉ nhận hàng.",
+	            false
+	        );
+
+	        return;
+	    }
+
+
+	    const token =
+	        getToken();
+
+
+	    if (!token) {
+
+	        window.location.href =
+	            "/index.html";
+
+	        return;
+	    }
+
+
+	    const button =
+	        document.getElementById(
+	            "checkoutButton"
+	        );
+
+
+	    try {
+
+	        // Không cho bấm 2 lần liên tục
+
+	        button.disabled = true;
+
+	        button.textContent =
+	            "ĐANG ĐẶT HÀNG...";
+
+
+	        const response =
+	            await fetch(
+	                API_URL + "/orders/checkout",
+	                {
+	                    method: "POST",
+
+	                    headers: {
+
+	                        "Content-Type":
+	                            "application/json",
+
+	                        "Authorization":
+	                            "Bearer " + token
+	                    },
+
+	                    body: JSON.stringify({
+
+	                        receiverName:
+	                            receiverName,
+
+	                        phone:
+	                            phone,
+
+	                        address:
+	                            address
+	                    })
+	                }
+	            );
+
+
+	        // JWT không hợp lệ
+
+	        if (
+	            response.status === 401 ||
+	            response.status === 403
+	        ) {
+
+	            localStorage.removeItem(
+	                "jwtToken"
+	            );
+
+	            window.location.href =
+	                "/index.html";
+
+	            return;
+	        }
+
+
+	        // Backend báo lỗi
+
+	        if (!response.ok) {
+
+	            const errorText =
+	                await response.text();
+
+
+	            throw new Error(
+	                errorText
+	                || "Đặt hàng thất bại."
+	            );
+	        }
+
+
+	        // Nhận Order từ backend
+
+	        const order =
+	            await response.json();
+
+
+	        alert(
+	            "Đặt hàng thành công!\n"
+	            + "Mã đơn hàng: #"
+	            + order.id
+	            + "\n"
+	            + "Thanh toán: COD"
+	            + "\n"
+	            + "Trạng thái: "
+	            + order.status
+	        );
+
+
+	        // Xóa nội dung form
+
+	        document.getElementById(
+	            "receiverName"
+	        ).value = "";
+
+
+	        document.getElementById(
+	            "phone"
+	        ).value = "";
+
+
+	        document.getElementById(
+	            "address"
+	        ).value = "";
+
+
+	        // Backend đã xóa cart_items
+	        // nên load lại giỏ
+
+	        await loadCart();
+
+	    }
+	    catch (error) {
+
+	        showMessage(
+	            error.message,
+	            false
+	        );
+
+	    }
+	    finally {
+
+	        button.disabled = false;
+
+	        button.textContent =
+	            "ĐẶT HÀNG COD";
+	    }
+	}
 
     // =====================================================
     // LOAD PAGE

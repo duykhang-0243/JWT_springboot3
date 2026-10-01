@@ -14,14 +14,13 @@ import vn.iotstar.entity.User;
 public interface CartItemRepository
         extends JpaRepository<CartItem, Integer> {
 
+    List<CartItem> findByUser(
+            User user);
 
-    // Lấy toàn bộ giỏ hàng của một User
-    List<CartItem> findByUser(User user);
-
-
-    // Tìm xem sản phẩm đã tồn tại trong giỏ chưa
     Optional<CartItem> findByUserAndProduct(
             User user,
-            Product product
-    );
+            Product product);
+
+    void deleteByUser(
+            User user);
 }
