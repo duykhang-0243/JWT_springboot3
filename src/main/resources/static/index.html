@@ -3,11 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>JWT Nimbus Demo</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -15,37 +20,95 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f6f9;
+            background: #f5f7fa;
             color: #222;
         }
 
-        /* ================= HEADER ================= */
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
 
         header {
-            height: 70px;
             background: white;
             border-bottom: 1px solid #ddd;
+            padding: 14px 32px;
 
             display: flex;
-            align-items: center;
             justify-content: space-between;
-
-            padding: 0 40px;
+            align-items: center;
         }
 
-        header h2 {
+        .brand h2 {
             margin: 0;
         }
 
-        header span {
+        .brand small {
             color: #666;
-            font-size: 14px;
         }
 
-        /* ================= AUTH ================= */
 
-        .auth-container {
-            min-height: calc(100vh - 70px);
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #222;
+            padding: 10px 14px;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            background: #eee;
+        }
+
+        nav a.active {
+            background: #222;
+            color: white;
+        }
+
+
+        /* =====================================================
+           BUTTON
+        ===================================================== */
+
+        button {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 16px;
+
+            background: #222;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        .logout-button {
+            background: #b3261e;
+        }
+
+        .logout-button:hover {
+            background: #8f1d18;
+        }
+
+
+        /* =====================================================
+           LOGIN / REGISTER
+        ===================================================== */
+
+        .auth-page {
+            min-height: calc(100vh - 75px);
 
             display: flex;
             justify-content: center;
@@ -55,126 +118,118 @@
         }
 
         .auth-card {
-            width: 430px;
+            width: 100%;
+            max-width: 380px;
+
             background: white;
-
-            padding: 32px;
-
             border: 1px solid #ddd;
-            border-radius: 12px;
+            border-radius: 10px;
 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 28px;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .auth-card h1 {
             margin-top: 0;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
-        .subtitle {
+        .auth-card p {
+            margin-top: 0;
             color: #666;
-            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
         }
 
         label {
             display: block;
-            font-weight: bold;
-
-            margin-top: 15px;
             margin-bottom: 6px;
+            font-weight: bold;
         }
 
         input {
             width: 100%;
-            padding: 11px;
+            padding: 10px;
 
             border: 1px solid #bbb;
-            border-radius: 6px;
-
-            font-size: 14px;
-        }
-
-        button {
-            border: none;
-            border-radius: 6px;
-
-            padding: 11px 18px;
-
-            background: #222;
-            color: white;
-
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover {
-            opacity: 0.85;
+            border-radius: 5px;
         }
 
         .full-button {
             width: 100%;
-            margin-top: 22px;
+            margin-top: 5px;
         }
 
-        .switch {
+        .auth-switch {
             text-align: center;
-            margin-top: 20px;
-
-            color: #666;
+            margin-top: 18px;
         }
 
-        .switch a {
-            color: #111;
+        .auth-switch a {
+            color: #222;
             font-weight: bold;
             cursor: pointer;
         }
 
+
+        /* =====================================================
+           MESSAGE
+        ===================================================== */
+
         .message {
-            margin-top: 18px;
-            padding: 12px;
-
-            background: #f7f7f7;
-            border-radius: 6px;
-
             display: none;
+
+            margin-bottom: 15px;
+            padding: 10px;
+
+            border-radius: 5px;
         }
 
-        .success {
-            color: green;
+        .message.success {
+            display: block;
+            background: #e8f5e9;
+            color: #1b5e20;
         }
 
-        .error {
-            color: #b52a2a;
+        .message.error {
+            display: block;
+            background: #ffebee;
+            color: #b71c1c;
         }
 
-        /* ================= DASHBOARD ================= */
+
+        /* =====================================================
+           DASHBOARD
+        ===================================================== */
 
         #dashboardPage {
             display: none;
         }
 
         .dashboard {
-            max-width: 1100px;
-
-            margin: 30px auto;
+            max-width: 1000px;
+            margin: 35px auto;
             padding: 0 20px;
         }
 
-        .welcome {
-            margin-bottom: 25px;
+        .dashboard-title {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .welcome h1 {
-            margin-bottom: 5px;
-        }
-
-        .welcome p {
+        .dashboard-title p {
             color: #666;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(300px, 1fr));
 
             gap: 20px;
         }
@@ -183,93 +238,94 @@
             background: white;
 
             border: 1px solid #ddd;
-            border-radius: 10px;
+            border-radius: 8px;
 
-            padding: 22px;
+            padding: 20px;
         }
 
         .card h3 {
             margin-top: 0;
         }
 
-        .full-card {
-            grid-column: 1 / -1;
-        }
-
         .info-row {
+            padding: 10px 0;
             border-bottom: 1px solid #eee;
-
-            padding: 12px 0;
         }
 
         .info-row:last-child {
             border-bottom: none;
         }
 
-        .info-label {
-            font-weight: bold;
-            color: #555;
-
-            display: inline-block;
-            width: 120px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-
-            margin-top: 15px;
-        }
-
-        th,
-        td {
-            padding: 11px;
-
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background: #f4f4f4;
-        }
-
         .token-box {
-            background: #f6f6f6;
+            width: 100%;
+            min-height: 110px;
 
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 5px;
 
-            padding: 12px;
+            padding: 10px;
+
+            background: #f8f8f8;
 
             word-break: break-all;
 
             font-family: monospace;
             font-size: 12px;
-
-            max-height: 100px;
-            overflow-y: auto;
         }
 
-        .logout {
-            background: #a83232;
+
+        /* =====================================================
+           QUICK MENU
+        ===================================================== */
+
+        .quick-menu {
+            margin-top: 20px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(250px, 1fr));
+
+            gap: 20px;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .quick-card {
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 8px;
+
+            padding: 25px;
+
+            text-align: center;
         }
 
-        @media (max-width: 800px) {
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .full-card {
-                grid-column: auto;
-            }
+        .quick-card h3 {
+            margin-top: 0;
         }
+
+        .quick-card p {
+            color: #666;
+            min-height: 40px;
+        }
+
+        .quick-card a {
+            display: inline-block;
+
+            margin-top: 10px;
+            padding: 10px 18px;
+
+            background: #222;
+            color: white;
+
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .quick-card a:hover {
+            background: #444;
+        }
+
     </style>
 </head>
 
@@ -277,43 +333,102 @@
 <body>
 
 
-<!-- ====================================================== -->
-<!-- LOGIN PAGE -->
-<!-- ====================================================== -->
+<!-- =========================================================
+     HEADER
+========================================================= -->
 
-<div id="loginPage">
+<header>
 
-    <header>
+    <div class="brand">
 
-        <div>
-            <h2>JWT Nimbus Demo</h2>
-            <span>Spring Boot Security</span>
-        </div>
+        <h2>JWT Nimbus Demo</h2>
 
-    </header>
+        <small>
+            Spring Boot Security
+        </small>
 
-
-    <div class="auth-container">
-
-        <div class="auth-card">
-
-            <h1>Đăng nhập</h1>
-
-            <div class="subtitle">
-                Đăng nhập để truy cập hệ thống
-            </div>
+    </div>
 
 
-            <label>Email</label>
+    <!-- Chỉ hiện khi đã đăng nhập -->
+
+    <nav
+        id="dashboardNav"
+        style="display: none;"
+    >
+
+        <a
+            href="/index.html"
+            class="active"
+        >
+            Trang chính
+        </a>
+
+        <a href="/products.html">
+            Sản phẩm
+        </a>
+
+        <a href="/cart.html">
+            Giỏ hàng
+        </a>
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            Đăng xuất
+        </button>
+
+    </nav>
+
+</header>
+
+
+
+<!-- =========================================================
+     LOGIN PAGE
+========================================================= -->
+
+<section
+    id="loginPage"
+    class="auth-page"
+>
+
+    <div class="auth-card">
+
+        <h1>Đăng nhập</h1>
+
+        <p>
+            Đăng nhập để truy cập hệ thống
+        </p>
+
+
+        <div
+            id="loginMessage"
+            class="message"
+        ></div>
+
+
+        <div class="form-group">
+
+            <label for="loginEmail">
+                Email
+            </label>
 
             <input
                 type="email"
                 id="loginEmail"
-                placeholder="user@gmail.com"
+                placeholder="example@gmail.com"
             >
 
+        </div>
 
-            <label>Mật khẩu</label>
+
+        <div class="form-group">
+
+            <label for="loginPassword">
+                Mật khẩu
+            </label>
 
             <input
                 type="password"
@@ -321,89 +436,93 @@
                 placeholder="Nhập mật khẩu"
             >
 
-
-            <button
-                class="full-button"
-                onclick="login()">
-
-                Đăng nhập
-
-            </button>
+        </div>
 
 
-            <div
-                id="loginMessage"
-                class="message">
-            </div>
+        <button
+            class="full-button"
+            onclick="login()"
+        >
+            Đăng nhập
+        </button>
 
 
-            <div class="switch">
+        <div class="auth-switch">
 
-                Chưa có tài khoản?
+            Chưa có tài khoản?
 
-                <a onclick="showRegister()">
-                    Đăng ký
-                </a>
-
-            </div>
+            <a onclick="showRegister()">
+                Đăng ký
+            </a>
 
         </div>
 
     </div>
 
-</div>
+</section>
 
 
 
-<!-- ====================================================== -->
-<!-- REGISTER PAGE -->
-<!-- ====================================================== -->
+<!-- =========================================================
+     REGISTER PAGE
+========================================================= -->
 
-<div
+<section
     id="registerPage"
-    style="display:none;">
+    class="auth-page"
+    style="display: none;"
+>
+
+    <div class="auth-card">
+
+        <h1>Đăng ký</h1>
+
+        <p>
+            Tạo tài khoản mới
+        </p>
 
 
-    <header>
-
-        <div>
-            <h2>JWT Nimbus Demo</h2>
-            <span>Spring Boot Security</span>
-        </div>
-
-    </header>
+        <div
+            id="registerMessage"
+            class="message"
+        ></div>
 
 
-    <div class="auth-container">
+        <div class="form-group">
 
-        <div class="auth-card">
-
-            <h1>Tạo tài khoản</h1>
-
-            <div class="subtitle">
-                Điền thông tin để đăng ký tài khoản mới
-            </div>
-
-
-            <label>Họ tên</label>
+            <label for="registerFullName">
+                Họ tên
+            </label>
 
             <input
                 type="text"
                 id="registerFullName"
-                placeholder="Nguyen Van A"
+                placeholder="Nguyễn Văn A"
             >
 
+        </div>
 
-            <label>Email</label>
+
+        <div class="form-group">
+
+            <label for="registerEmail">
+                Email
+            </label>
 
             <input
                 type="email"
                 id="registerEmail"
-                placeholder="user@gmail.com"
+                placeholder="example@gmail.com"
             >
 
+        </div>
 
-            <label>Mật khẩu</label>
+
+        <div class="form-group">
+
+            <label for="registerPassword">
+                Mật khẩu
+            </label>
 
             <input
                 type="password"
@@ -411,76 +530,42 @@
                 placeholder="Nhập mật khẩu"
             >
 
-
-            <button
-                class="full-button"
-                onclick="register()">
-
-                Đăng ký
-
-            </button>
+        </div>
 
 
-            <div
-                id="registerMessage"
-                class="message">
-            </div>
+        <button
+            class="full-button"
+            onclick="register()"
+        >
+            Đăng ký
+        </button>
 
 
-            <div class="switch">
+        <div class="auth-switch">
 
-                Đã có tài khoản?
+            Đã có tài khoản?
 
-                <a onclick="showLogin()">
-                    Đăng nhập
-                </a>
-
-            </div>
+            <a onclick="showLogin()">
+                Đăng nhập
+            </a>
 
         </div>
 
     </div>
 
-</div>
+</section>
 
 
 
-<!-- ====================================================== -->
-<!-- DASHBOARD -->
-<!-- ====================================================== -->
+<!-- =========================================================
+     DASHBOARD / TRANG CHÍNH
+========================================================= -->
 
-<div id="dashboardPage">
+<section id="dashboardPage">
 
+    <div class="dashboard">
 
-    <header>
-
-        <div>
-            <h2>JWT Nimbus Demo</h2>
-            <span>Authenticated Area</span>
-        </div>
-
-
-        <div class="header-actions">
-
-            <span id="headerEmail"></span>
-
-            <button
-                class="logout"
-                onclick="logout()">
-
-                Đăng xuất
-
-            </button>
-
-        </div>
-
-    </header>
-
-
-    <main class="dashboard">
-
-
-        <div class="welcome">
+        <div class="dashboard-title">
 
             <h1>Trang chính</h1>
 
@@ -491,21 +576,23 @@
         </div>
 
 
+        <!-- THÔNG TIN USER + TOKEN -->
+
         <div class="grid">
 
 
-            <!-- CURRENT USER -->
+            <!-- USER -->
 
             <div class="card">
 
-                <h3>Thông tin tài khoản</h3>
+                <h3>
+                    Thông tin tài khoản
+                </h3>
 
 
                 <div class="info-row">
 
-                    <span class="info-label">
-                        ID:
-                    </span>
+                    <strong>ID:</strong>
 
                     <span id="userId">
                         -
@@ -516,9 +603,7 @@
 
                 <div class="info-row">
 
-                    <span class="info-label">
-                        Họ tên:
-                    </span>
+                    <strong>Họ tên:</strong>
 
                     <span id="userFullName">
                         -
@@ -529,9 +614,7 @@
 
                 <div class="info-row">
 
-                    <span class="info-label">
-                        Email:
-                    </span>
+                    <strong>Email:</strong>
 
                     <span id="userEmail">
                         -
@@ -543,57 +626,77 @@
 
 
 
-            <!-- JWT -->
+            <!-- TOKEN -->
 
             <div class="card">
 
-                <h3>JWT Token</h3>
+                <h3>
+                    JWT Token
+                </h3>
 
                 <p>
                     Token được tạo bởi
-                    <strong>Nimbus JOSE + JWT</strong>.
+                    <strong>
+                        Nimbus JOSE + JWT
+                    </strong>.
                 </p>
 
                 <div
                     id="tokenDisplay"
-                    class="token-box">
-                </div>
+                    class="token-box"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- MENU NHANH -->
+
+        <div class="quick-menu">
+
+
+            <div class="quick-card">
+
+                <h3>
+                    Sản phẩm
+                </h3>
+
+                <p>
+                    Xem danh sách sản phẩm và thêm sản phẩm vào giỏ hàng.
+                </p>
+
+                <a href="/products.html">
+                    Xem sản phẩm
+                </a>
 
             </div>
 
 
 
-            <!-- USERS -->
+            <div class="quick-card">
 
-            <div class="card full-card">
+                <h3>
+                    Giỏ hàng
+                </h3>
 
-                <h3>Danh sách người dùng</h3>
+                <p>
+                    Xem và quản lý các sản phẩm đang có trong giỏ hàng.
+                </p>
 
-
-                <button onclick="loadUsers()">
-
-                    Tải danh sách
-
-                </button>
-
-
-                <div id="usersContainer">
-
-                    <p>
-                        Nhấn "Tải danh sách"
-                        để xem dữ liệu.
-                    </p>
-
-                </div>
+                <a href="/cart.html">
+                    Xem giỏ hàng
+                </a>
 
             </div>
 
 
         </div>
 
-    </main>
+    </div>
 
-</div>
+</section>
 
 
 
@@ -603,21 +706,33 @@
 
 
     // =====================================================
-    // CHUYỂN MÀN HÌNH
+    // CHUYỂN SANG LOGIN
     // =====================================================
 
     function showLogin() {
 
         document.getElementById(
             "loginPage"
-        ).style.display = "block";
-
+        ).style.display = "flex";
 
         document.getElementById(
             "registerPage"
         ).style.display = "none";
+
+        document.getElementById(
+            "dashboardPage"
+        ).style.display = "none";
+
+        document.getElementById(
+            "dashboardNav"
+        ).style.display = "none";
     }
 
+
+
+    // =====================================================
+    // CHUYỂN SANG REGISTER
+    // =====================================================
 
     function showRegister() {
 
@@ -625,10 +740,17 @@
             "loginPage"
         ).style.display = "none";
 
-
         document.getElementById(
             "registerPage"
-        ).style.display = "block";
+        ).style.display = "flex";
+
+        document.getElementById(
+            "dashboardPage"
+        ).style.display = "none";
+
+        document.getElementById(
+            "dashboardNav"
+        ).style.display = "none";
     }
 
 
@@ -644,12 +766,10 @@
                 "registerFullName"
             ).value.trim();
 
-
         const email =
             document.getElementById(
                 "registerEmail"
             ).value.trim();
-
 
         const password =
             document.getElementById(
@@ -681,7 +801,6 @@
                 await fetch(
                     API_URL + "/auth/signup",
                     {
-
                         method: "POST",
 
                         headers: {
@@ -690,15 +809,9 @@
                         },
 
                         body: JSON.stringify({
-
-                            fullName:
-                                fullName,
-
-                            email:
-                                email,
-
-                            password:
-                                password
+                            fullName: fullName,
+                            email: email,
+                            password: password
                         })
                     }
                 );
@@ -714,34 +827,32 @@
 
             showMessage(
                 message,
-                "Đăng ký thành công! Đang chuyển đến trang đăng nhập...",
+                "Đăng ký thành công. Đang chuyển sang đăng nhập...",
                 true
             );
 
 
-            /*
-             * Điền sẵn email sang màn hình login
-             */
             document.getElementById(
                 "loginEmail"
             ).value = email;
 
 
-            /*
-             * Sau khi đăng ký thành công
-             * → quay về Login
-             */
+            document.getElementById(
+                "registerPassword"
+            ).value = "";
+
+
             setTimeout(
-                () => {
+                function() {
 
                     showLogin();
 
                 },
-                1000
+                800
             );
 
-
-        } catch (error) {
+        }
+        catch (error) {
 
             showMessage(
                 message,
@@ -763,7 +874,6 @@
             document.getElementById(
                 "loginEmail"
             ).value.trim();
-
 
         const password =
             document.getElementById(
@@ -795,22 +905,16 @@
                 await fetch(
                     API_URL + "/auth/login",
                     {
-
                         method: "POST",
 
                         headers: {
-
                             "Content-Type":
                                 "application/json"
                         },
 
                         body: JSON.stringify({
-
-                            email:
-                                email,
-
-                            password:
-                                password
+                            email: email,
+                            password: password
                         })
                     }
                 );
@@ -819,7 +923,7 @@
             if (!response.ok) {
 
                 throw new Error(
-                    "Email hoặc mật khẩu không chính xác."
+                    "Email hoặc mật khẩu không đúng."
                 );
             }
 
@@ -828,24 +932,16 @@
                 await response.json();
 
 
-            /*
-             * Lưu JWT vào trình duyệt
-             */
             localStorage.setItem(
                 "jwtToken",
                 data.token
             );
 
 
-            /*
-             * Sau login
-             * → lấy thông tin user
-             * → mở dashboard
-             */
             await openDashboard();
 
-
-        } catch (error) {
+        }
+        catch (error) {
 
             showMessage(
                 message,
@@ -858,7 +954,7 @@
 
 
     // =====================================================
-    // DASHBOARD
+    // MỞ DASHBOARD
     // =====================================================
 
     async function openDashboard() {
@@ -879,16 +975,13 @@
 
         try {
 
-            /*
-             * Kiểm tra JWT bằng API /users/me
-             */
             const response =
                 await fetch(
                     API_URL + "/users/me",
                     {
+                        method: "GET",
 
                         headers: {
-
                             "Authorization":
                                 "Bearer " + token
                         }
@@ -899,7 +992,7 @@
             if (!response.ok) {
 
                 throw new Error(
-                    "JWT không hợp lệ."
+                    "Token không hợp lệ hoặc đã hết hạn."
                 );
             }
 
@@ -908,215 +1001,75 @@
                 await response.json();
 
 
-            /*
-             * Ẩn login + register
-             */
+            // Ẩn Login/Register
+
             document.getElementById(
                 "loginPage"
-            ).style.display =
-                "none";
-
+            ).style.display = "none";
 
             document.getElementById(
                 "registerPage"
-            ).style.display =
-                "none";
+            ).style.display = "none";
 
 
-            /*
-             * Hiện dashboard
-             */
+            // Hiện Dashboard
+
             document.getElementById(
                 "dashboardPage"
-            ).style.display =
-                "block";
+            ).style.display = "block";
 
 
-            /*
-             * Hiển thị thông tin User
-             */
+            // Hiện Navigation
+
+            document.getElementById(
+                "dashboardNav"
+            ).style.display = "flex";
+
+
+            // Hiển thị User
+
             document.getElementById(
                 "userId"
             ).textContent =
-                user.id ?? "";
+                user.id ?? "-";
 
 
             document.getElementById(
                 "userFullName"
             ).textContent =
-                user.fullname ?? "";
+                user.fullname ?? "-";
 
 
             document.getElementById(
                 "userEmail"
             ).textContent =
-                user.email ?? "";
+                user.email ?? "-";
 
 
-            document.getElementById(
-                "headerEmail"
-            ).textContent =
-                user.email ?? "";
+            // Hiển thị JWT
 
-
-            /*
-             * Hiển thị JWT
-             */
             document.getElementById(
                 "tokenDisplay"
             ).textContent =
                 token;
 
+        }
+        catch (error) {
 
-        } catch (error) {
-
-            /*
-             * Token hết hạn hoặc sai
-             */
             localStorage.removeItem(
                 "jwtToken"
             );
 
-
-            document.getElementById(
-                "dashboardPage"
-            ).style.display =
-                "none";
-
-
             showLogin();
-        }
-    }
 
-
-
-    // =====================================================
-    // LOAD ALL USERS
-    // =====================================================
-
-    async function loadUsers() {
-
-        const token =
-            localStorage.getItem(
-                "jwtToken"
+            showMessage(
+                document.getElementById(
+                    "loginMessage"
+                ),
+                error.message,
+                false
             );
-
-
-        try {
-
-            const response =
-                await fetch(
-                    API_URL + "/users",
-                    {
-
-                        headers: {
-
-                            "Authorization":
-                                "Bearer " + token
-                        }
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Không thể lấy danh sách người dùng."
-                );
-            }
-
-
-            const users =
-                await response.json();
-
-
-            renderUsers(users);
-
-
-        } catch (error) {
-
-            document.getElementById(
-                "usersContainer"
-            ).innerHTML =
-                "<p>"
-                + error.message
-                + "</p>";
         }
-    }
-
-
-
-    // =====================================================
-    // RENDER USERS
-    // =====================================================
-
-    function renderUsers(users) {
-
-        let html = `
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>ID</th>
-
-                        <th>Họ tên</th>
-
-                        <th>Email</th>
-
-                        <th>Images</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-        `;
-
-
-        users.forEach(
-            user => {
-
-                html += `
-
-                    <tr>
-
-                        <td>
-                            ${user.id ?? ""}
-                        </td>
-
-                        <td>
-                            ${user.fullname ?? ""}
-                        </td>
-
-                        <td>
-                            ${user.email ?? ""}
-                        </td>
-
-                        <td>
-                            ${user.images ?? ""}
-                        </td>
-
-                    </tr>
-                `;
-            }
-        );
-
-
-        html += `
-
-                </tbody>
-
-            </table>
-        `;
-
-
-        document.getElementById(
-            "usersContainer"
-        ).innerHTML =
-            html;
     }
 
 
@@ -1127,29 +1080,24 @@
 
     function logout() {
 
-        /*
-         * JWT stateless:
-         * Logout phía client
-         * bằng cách xóa token.
-         */
         localStorage.removeItem(
             "jwtToken"
         );
 
 
         document.getElementById(
-            "dashboardPage"
-        ).style.display =
-            "none";
-
-
-        /*
-         * Xóa password cũ
-         */
-        document.getElementById(
             "loginPassword"
-        ).value =
-            "";
+        ).value = "";
+
+
+        document.getElementById(
+            "dashboardPage"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "dashboardNav"
+        ).style.display = "none";
 
 
         showLogin();
@@ -1167,37 +1115,23 @@
         success
     ) {
 
-        element.style.display =
-            "block";
-
-
         element.textContent =
             text;
 
-
         element.className =
             success
-            ? "message success"
-            : "message error";
+                ? "message success"
+                : "message error";
     }
 
 
 
     // =====================================================
-    // KHI MỞ WEBSITE
+    // KHI WEBSITE ĐƯỢC MỞ
     // =====================================================
 
     window.onload =
         function() {
-
-            /*
-             * Nếu đã có JWT
-             * → kiểm tra token
-             * → vào Dashboard.
-             *
-             * Nếu chưa có JWT
-             * → Login.
-             */
 
             const token =
                 localStorage.getItem(
@@ -1209,13 +1143,15 @@
 
                 openDashboard();
 
-            } else {
+            }
+            else {
 
                 showLogin();
             }
         };
 
 </script>
+
 
 </body>
 

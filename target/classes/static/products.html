@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Sản phẩm - JWT Nimbus Demo</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        header {
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 14px 32px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand h2 {
+            margin: 0;
+        }
+
+        .brand small {
+            color: #666;
+        }
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #222;
+            padding: 10px 14px;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            background: #eee;
+        }
+
+        nav a.active {
+            background: #222;
+            color: white;
+        }
+
+        button {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 16px;
+
+            background: #222;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .logout-button {
+            background: #b3261e;
+        }
+
+        .logout-button:hover {
+            background: #8f1d18;
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        main {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #666;
+        }
+
+        /* =====================================================
+           MESSAGE
+        ===================================================== */
+
+        #productMessage {
+            display: none;
+
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+
+            padding: 12px;
+
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        #productMessage.success {
+            display: block;
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        #productMessage.error {
+            display: block;
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+        /* =====================================================
+           PRODUCT
+        ===================================================== */
+
+        .product-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            padding: 20px;
+
+            display: flex;
+            flex-direction: column;
+
+            min-height: 220px;
+        }
+
+        .product-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+
+            margin-bottom: 10px;
+        }
+
+        .product-stock {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .product-card button {
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
+        /* =====================================================
+           CART LINK
+        ===================================================== */
+
+        .cart-link {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .cart-link a {
+            display: inline-block;
+
+            padding: 12px 20px;
+
+            background: #222;
+            color: white;
+
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .cart-link a:hover {
+            background: #444;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header>
+
+    <div class="brand">
+
+        <h2>JWT Nimbus Demo</h2>
+
+        <small>
+            Spring Boot Security
+        </small>
+
+    </div>
+
+
+    <nav>
+
+        <a href="/index.html">
+            Trang chính
+        </a>
+
+        <a
+            href="/products.html"
+            class="active"
+        >
+            Sản phẩm
+        </a>
+
+        <a href="/cart.html">
+            Giỏ hàng
+        </a>
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            Đăng xuất
+        </button>
+
+    </nav>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main>
+
+    <div class="page-title">
+
+        <h1>Danh sách sản phẩm</h1>
+
+        <p>
+            Chọn sản phẩm bạn muốn thêm vào giỏ hàng.
+        </p>
+
+    </div>
+
+
+    <div id="productMessage"></div>
+
+
+    <div
+        id="productList"
+        class="product-grid"
+    >
+
+        <div class="loading">
+            Đang tải sản phẩm...
+        </div>
+
+    </div>
+
+
+    <div class="cart-link">
+
+        <a href="/cart.html">
+            Xem giỏ hàng
+        </a>
+
+    </div>
+
+</main>
+
+
+
+<script>
+
+    const API_URL = "";
+
+
+    // =====================================================
+    // KIỂM TRA JWT
+    // =====================================================
+
+    function getToken() {
+
+        return localStorage.getItem(
+            "jwtToken"
+        );
+    }
+
+
+    function requireLogin() {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+
+    // =====================================================
+    // LOAD PRODUCTS
+    // =====================================================
+
+    async function loadProducts() {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL + "/products",
+                    {
+                        method: "GET",
+
+                        headers: {
+                            "Authorization":
+                                "Bearer " + token
+                        }
+                    }
+                );
+
+
+            /*
+             * JWT hết hạn / không hợp lệ
+             */
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "jwtToken"
+                );
+
+                window.location.href =
+                    "/index.html";
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Không thể tải danh sách sản phẩm."
+                );
+            }
+
+
+            const products =
+                await response.json();
+
+
+            renderProducts(
+                products
+            );
+
+        }
+        catch (error) {
+
+            document.getElementById(
+                "productList"
+            ).innerHTML =
+                '<div class="loading">'
+                + error.message
+                + '</div>';
+        }
+    }
+
+
+
+    // =====================================================
+    // RENDER PRODUCTS
+    // =====================================================
+
+    function renderProducts(products) {
+
+        const container =
+            document.getElementById(
+                "productList"
+            );
+
+
+        if (products.length === 0) {
+
+            container.innerHTML =
+                '<div class="loading">'
+                + 'Chưa có sản phẩm.'
+                + '</div>';
+
+            return;
+        }
+
+
+        let html = "";
+
+
+        products.forEach(
+            function(product) {
+
+                const isOutOfStock =
+                    product.stock <= 0;
+
+
+                html += `
+                    <div class="product-card">
+
+                        <h3>
+                            ${product.name}
+                        </h3>
+
+                        <div class="product-price">
+                            ${formatMoney(product.price)}
+                        </div>
+
+                        <div class="product-stock">
+                            Tồn kho:
+                            ${product.stock}
+                        </div>
+
+                        <button
+                            onclick="addToCart(${product.id})"
+                            ${isOutOfStock ? "disabled" : ""}
+                        >
+                            ${
+                                isOutOfStock
+                                    ? "Hết hàng"
+                                    : "Thêm vào giỏ"
+                            }
+                        </button>
+
+                    </div>
+                `;
+            }
+        );
+
+
+        container.innerHTML =
+            html;
+    }
+
+
+
+    // =====================================================
+    // ADD TO CART
+    // =====================================================
+
+    async function addToCart(
+        productId
+    ) {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL
+                    + "/cart/add/"
+                    + productId,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Authorization":
+                                "Bearer " + token
+                        }
+                    }
+                );
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "jwtToken"
+                );
+
+                window.location.href =
+                    "/index.html";
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Không thể thêm sản phẩm. "
+                    + "Số lượng có thể đã đạt giới hạn tồn kho."
+                );
+            }
+
+
+            showMessage(
+                "Đã thêm sản phẩm vào giỏ hàng.",
+                true
+            );
+
+        }
+        catch (error) {
+
+            showMessage(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+        text,
+        success
+    ) {
+
+        const element =
+            document.getElementById(
+                "productMessage"
+            );
+
+
+        element.textContent =
+            text;
+
+
+        element.className =
+            success
+                ? "success"
+                : "error";
+
+
+        /*
+         * Sau 2 giây tự ẩn thông báo.
+         */
+
+        setTimeout(
+            function() {
+
+                element.style.display =
+                    "none";
+
+            },
+            2000
+        );
+    }
+
+
+
+    // =====================================================
+    // FORMAT MONEY
+    // =====================================================
+
+    function formatMoney(
+        value
+    ) {
+
+        return Number(value)
+            .toLocaleString(
+                "vi-VN",
+                {
+                    style: "currency",
+                    currency: "VND"
+                }
+            );
+    }
+
+
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "jwtToken"
+        );
+
+
+        window.location.href =
+            "/index.html";
+    }
+
+
+
+    // =====================================================
+    // LOAD PAGE
+    // =====================================================
+
+    window.onload =
+        function() {
+
+            if (requireLogin()) {
+
+                loadProducts();
+            }
+        };
+
+</script>
+
+
+</body>
+
+</html>

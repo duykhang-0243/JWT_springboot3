@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Giỏ hàng - JWT Nimbus Demo</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            color: #222;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        header {
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 14px 32px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand h2 {
+            margin: 0;
+        }
+
+        .brand small {
+            color: #666;
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #222;
+
+            padding: 10px 14px;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            background: #eee;
+        }
+
+        nav a.active {
+            background: #222;
+            color: white;
+        }
+
+        button {
+            border: none;
+            border-radius: 6px;
+
+            padding: 10px 16px;
+
+            background: #222;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .logout-button {
+            background: #b3261e;
+        }
+
+        .logout-button:hover {
+            background: #8f1d18;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        main {
+            max-width: 1000px;
+
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #666;
+        }
+
+
+        /* =====================================================
+           MESSAGE
+        ===================================================== */
+
+        #cartMessage {
+            display: none;
+
+            margin-bottom: 20px;
+            padding: 12px;
+
+            border-radius: 6px;
+
+            text-align: center;
+        }
+
+        #cartMessage.success {
+            display: block;
+
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        #cartMessage.error {
+            display: block;
+
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+
+        /* =====================================================
+           CART
+        ===================================================== */
+
+        .cart-container {
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+        .cart-item {
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr 1.5fr 1fr auto;
+
+            gap: 20px;
+
+            align-items: center;
+
+            padding: 20px;
+
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: bold;
+            font-size: 17px;
+        }
+
+        .product-stock {
+            margin-top: 5px;
+
+            color: #666;
+            font-size: 13px;
+        }
+
+        .price {
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           QUANTITY
+        ===================================================== */
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+
+            gap: 5px;
+        }
+
+        .quantity-control button {
+            width: 35px;
+            height: 35px;
+
+            padding: 0;
+        }
+
+        .quantity-control input {
+            width: 60px;
+            height: 35px;
+
+            text-align: center;
+
+            border: 1px solid #bbb;
+            border-radius: 5px;
+        }
+
+
+        /* =====================================================
+           DELETE
+        ===================================================== */
+
+        .delete-button {
+            background: #b3261e;
+        }
+
+        .delete-button:hover {
+            background: #8f1d18;
+        }
+
+
+        /* =====================================================
+           TOTAL
+        ===================================================== */
+
+        .cart-summary {
+            margin-top: 20px;
+
+            background: white;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            padding: 20px;
+
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-summary span {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           EMPTY / LOADING
+        ===================================================== */
+
+        .empty-cart {
+            padding: 50px 20px;
+
+            text-align: center;
+            color: #666;
+        }
+
+        .empty-cart a {
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 10px 18px;
+
+            background: #222;
+            color: white;
+
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 800px) {
+
+            .cart-item {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header>
+
+    <div class="brand">
+
+        <h2>JWT Nimbus Demo</h2>
+
+        <small>
+            Spring Boot Security
+        </small>
+
+    </div>
+
+
+    <nav>
+
+        <a href="/index.html">
+            Trang chính
+        </a>
+
+        <a href="/products.html">
+            Sản phẩm
+        </a>
+
+        <a
+            href="/cart.html"
+            class="active"
+        >
+            Giỏ hàng
+        </a>
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            Đăng xuất
+        </button>
+
+    </nav>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main>
+
+    <div class="page-title">
+
+        <h1>Giỏ hàng</h1>
+
+        <p>
+            Quản lý các sản phẩm bạn đã chọn.
+        </p>
+
+    </div>
+
+
+    <div
+        id="cartMessage"
+    ></div>
+
+
+    <div
+        id="cartContainer"
+        class="cart-container"
+    >
+
+        <div class="empty-cart">
+            Đang tải giỏ hàng...
+        </div>
+
+    </div>
+
+
+    <div
+        id="cartSummary"
+        class="cart-summary"
+        style="display: none;"
+    >
+
+        <strong>
+            Tổng tiền
+        </strong>
+
+        <span id="cartTotal">
+            0 ₫
+        </span>
+
+    </div>
+
+</main>
+
+
+
+<script>
+
+    const API_URL = "";
+
+
+    // =====================================================
+    // TOKEN
+    // =====================================================
+
+    function getToken() {
+
+        return localStorage.getItem(
+            "jwtToken"
+        );
+    }
+
+
+
+    function requireLogin() {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+
+    // =====================================================
+    // LOAD CART
+    // =====================================================
+
+    async function loadCart() {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL + "/cart",
+                    {
+                        method: "GET",
+
+                        headers: {
+                            "Authorization":
+                                "Bearer " + token
+                        }
+                    }
+                );
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "jwtToken"
+                );
+
+                window.location.href =
+                    "/index.html";
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Không thể tải giỏ hàng."
+                );
+            }
+
+
+            const cartItems =
+                await response.json();
+
+
+            renderCart(
+                cartItems
+            );
+
+        }
+        catch (error) {
+
+            document.getElementById(
+                "cartContainer"
+            ).innerHTML =
+                '<div class="empty-cart">'
+                + error.message
+                + '</div>';
+        }
+    }
+
+
+
+    // =====================================================
+    // RENDER CART
+    // =====================================================
+
+    function renderCart(
+        cartItems
+    ) {
+
+        const container =
+            document.getElementById(
+                "cartContainer"
+            );
+
+
+        const summary =
+            document.getElementById(
+                "cartSummary"
+            );
+
+
+        if (cartItems.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty-cart">
+
+                    <h3>
+                        Giỏ hàng đang trống
+                    </h3>
+
+                    <p>
+                        Bạn chưa thêm sản phẩm nào.
+                    </p>
+
+                    <a href="/products.html">
+                        Xem sản phẩm
+                    </a>
+
+                </div>
+            `;
+
+
+            summary.style.display =
+                "none";
+
+
+            return;
+        }
+
+
+        let html = "";
+
+        let total = 0;
+
+
+        cartItems.forEach(
+            function(item) {
+
+                const product =
+                    item.product;
+
+
+                const quantity =
+                    item.quantity;
+
+
+                const subtotal =
+                    Number(product.price)
+                    * quantity;
+
+
+                total += subtotal;
+
+
+                const disableMinus =
+                    quantity <= 1;
+
+
+                const disablePlus =
+                    quantity >= product.stock;
+
+
+                html += `
+                    <div class="cart-item">
+
+                        <div>
+
+                            <div class="product-name">
+                                ${product.name}
+                            </div>
+
+                            <div class="product-stock">
+                                Tồn kho:
+                                ${product.stock}
+                            </div>
+
+                        </div>
+
+
+                        <div class="price">
+
+                            ${formatMoney(
+                                product.price
+                            )}
+
+                        </div>
+
+
+                        <div class="quantity-control">
+
+                            <button
+                                onclick="
+                                    changeQuantity(
+                                        ${item.id},
+                                        ${quantity - 1},
+                                        ${product.stock}
+                                    )
+                                "
+                                ${disableMinus ? "disabled" : ""}
+                            >
+                                -
+                            </button>
+
+
+                            <input
+                                type="number"
+
+                                min="1"
+
+                                max="${product.stock}"
+
+                                value="${quantity}"
+
+                                onchange="
+                                    inputQuantity(
+                                        ${item.id},
+                                        this,
+                                        ${product.stock}
+                                    )
+                                "
+                            >
+
+
+                            <button
+                                onclick="
+                                    changeQuantity(
+                                        ${item.id},
+                                        ${quantity + 1},
+                                        ${product.stock}
+                                    )
+                                "
+                                ${disablePlus ? "disabled" : ""}
+                            >
+                                +
+                            </button>
+
+                        </div>
+
+
+                        <div class="price">
+
+                            ${formatMoney(
+                                subtotal
+                            )}
+
+                        </div>
+
+
+                        <button
+                            class="delete-button"
+
+                            onclick="
+                                removeCartItem(
+                                    ${item.id}
+                                )
+                            "
+                        >
+                            Xóa
+                        </button>
+
+                    </div>
+                `;
+            }
+        );
+
+
+        container.innerHTML =
+            html;
+
+
+        document.getElementById(
+            "cartTotal"
+        ).textContent =
+            formatMoney(total);
+
+
+        summary.style.display =
+            "flex";
+    }
+
+
+
+    // =====================================================
+    // INPUT QUANTITY
+    // =====================================================
+
+    function inputQuantity(
+        cartItemId,
+        input,
+        stock
+    ) {
+
+        let quantity =
+            parseInt(
+                input.value
+            );
+
+
+        /*
+         * Không cho nhỏ hơn 1
+         */
+
+        if (
+            isNaN(quantity) ||
+            quantity < 1
+        ) {
+
+            quantity = 1;
+        }
+
+
+        /*
+         * Không cho lớn hơn tồn kho
+         */
+
+        if (quantity > stock) {
+
+            quantity = stock;
+        }
+
+
+        input.value =
+            quantity;
+
+
+        changeQuantity(
+            cartItemId,
+            quantity,
+            stock
+        );
+    }
+
+
+
+    // =====================================================
+    // UPDATE QUANTITY
+    // =====================================================
+
+    async function changeQuantity(
+        cartItemId,
+        quantity,
+        stock
+    ) {
+
+        /*
+         * Kiểm tra phía frontend
+         */
+
+        if (
+            quantity < 1 ||
+            quantity > stock
+        ) {
+
+            showMessage(
+                "Số lượng phải từ 1 đến "
+                + stock
+                + ".",
+                false
+            );
+
+            return;
+        }
+
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL
+                    + "/cart/"
+                    + cartItemId
+                    + "?quantity="
+                    + quantity,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Authorization":
+                                "Bearer " + token
+                        }
+                    }
+                );
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "jwtToken"
+                );
+
+                window.location.href =
+                    "/index.html";
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Không thể cập nhật số lượng."
+                );
+            }
+
+
+            /*
+             * Load lại giỏ để cập nhật:
+             * - quantity
+             * - subtotal
+             * - total
+             * - trạng thái nút + -
+             */
+
+            await loadCart();
+
+        }
+        catch (error) {
+
+            showMessage(
+                error.message,
+                false
+            );
+
+
+            /*
+             * Khôi phục dữ liệu thật từ server.
+             */
+
+            await loadCart();
+        }
+    }
+
+
+
+    // =====================================================
+    // REMOVE ITEM
+    // =====================================================
+
+    async function removeCartItem(
+        cartItemId
+    ) {
+
+        const token =
+            getToken();
+
+
+        if (!token) {
+
+            window.location.href =
+                "/index.html";
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL
+                    + "/cart/"
+                    + cartItemId,
+                    {
+                        method: "DELETE",
+
+                        headers: {
+                            "Authorization":
+                                "Bearer " + token
+                        }
+                    }
+                );
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "jwtToken"
+                );
+
+                window.location.href =
+                    "/index.html";
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Không thể xóa sản phẩm."
+                );
+            }
+
+
+            showMessage(
+                "Đã xóa sản phẩm khỏi giỏ hàng.",
+                true
+            );
+
+
+            await loadCart();
+
+        }
+        catch (error) {
+
+            showMessage(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+
+    // =====================================================
+    // MESSAGE
+    // =====================================================
+
+    function showMessage(
+        text,
+        success
+    ) {
+
+        const element =
+            document.getElementById(
+                "cartMessage"
+            );
+
+
+        element.textContent =
+            text;
+
+
+        element.className =
+            success
+                ? "success"
+                : "error";
+
+
+        setTimeout(
+            function() {
+
+                element.style.display =
+                    "none";
+
+            },
+            2000
+        );
+    }
+
+
+
+    // =====================================================
+    // FORMAT MONEY
+    // =====================================================
+
+    function formatMoney(
+        value
+    ) {
+
+        return Number(value)
+            .toLocaleString(
+                "vi-VN",
+                {
+                    style: "currency",
+                    currency: "VND"
+                }
+            );
+    }
+
+
+
+    // =====================================================
+    // LOGOUT
+    // =====================================================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "jwtToken"
+        );
+
+
+        window.location.href =
+            "/index.html";
+    }
+
+
+
+    // =====================================================
+    // LOAD PAGE
+    // =====================================================
+
+    window.onload =
+        function() {
+
+            if (requireLogin()) {
+
+                loadCart();
+            }
+        };
+
+</script>
+
+
+</body>
+
+</html>
